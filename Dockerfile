@@ -1,3 +1,6 @@
+FROM arm32v7/debian:stretch-slim AS builder
+COPY qemu-arm-static /usr/bin
+
 FROM "nunofgs/octoprint:alpine"
 LABEL maintainer="Austin Shirley"
 
