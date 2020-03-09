@@ -1,23 +1,29 @@
-# Home Assistant with socat for remote zwave
+# Octoprint with socat for remote printers
 
-Based on [homeassistant-home-assistant](https://hub.docker.com/r/homeassistant/home-assistant/) image, [published on docker hub](https://hub.docker.com/r/vladbabii/homeassistant-socat/).
+This is a Dockerfile to set up [OctoPrint](http://octoprint.org/) using an idea from vladbabii/homeassistant-socat to connect to network printers.
 
-Please [report issues on github](https://github.com/vladbabii/homeassistant-socat/issues).
+It also may be useful for running in a docker-based cluster such as swarm.
 
-Instead of using a locally-connected zwave device (usb stick/etc), we can use a serial device mapped over the network with ser2net and then map it to a local zwave serial device with socat.
+Based on [nunofgs/octoprint](https://hub.docker.com/r/nunofgs/octoprint) image published on Docker Hub (as this is currently the most flexible image available which also supports the lightweight alpine), and [homeassistant-socat](https://github.com/vladbabii/homeassistant-socat) for the main idea on how to acheive this.
+
+This is a new project and many issues are expected!!
+
+# Usage
+
+Instead of using a locally-connected printer (usb serial device), we can use the serial device mapped over the network with ser2net and then map it to a local zwave serial device with socat.
 
 This docker container ensures that
 
- - a zwave device is mapped in the local docker with socat
+ - A serial device is mapped in the local docker with socat
 
- - home assistant is running
+ - Octoprint is running
 
-If there are any failures, both socat and home assistant will be restarted.
+If there are any failures, both socat and octoprint will be restarted.
 
 
 # Environment options:
 
-All  [homeassistant-home-assistant](https://hub.docker.com/r/homeassistant/home-assistant/) image options are available and on top of that a few others have been added:
+All Octoprint variables are available and on top of that a few others have been added:
 
 **DEBUG_VERBOSE**=0
 
@@ -37,14 +43,14 @@ Path to log file. Ommit to write logs to stdout.
 
 Default: stdout
 
-**SOCAT_ZWAVE_TYPE**="tcp"
+**SOCAT_PRINTER_TYPE**="tcp"
 
-**SOCAT_ZWAVE_HOST**="192.168.5.5"
+**SOCAT_PRINTER_HOST**="192.168.5.5"
 
-**SOCAT_ZWAVE_PORT**="7676"
+**SOCAT_PRINTER_PORT**="7676"
 
 Where socat should connect to - will be used as tcp://192.168.5.5:7676
 
-**SOCAT_ZWAVE_LINK**="/dev/zwave"
+**SOCAT_PRINTER_LINK**="/dev/printer"
 
-What the zwave device should be mapped to. Use this in your home assistant configuration file.
+What the printer's serial device should be mapped to. Use this in octoprint's configuration files.
