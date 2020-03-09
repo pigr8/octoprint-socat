@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-if [[ -z "${SOCAT_ZWAVE_TYPE}" ]]; then
-  SOCAT_ZWAVE_TYPE="tcp"
+if [[ -z "${SOCAT_PRINTER_TYPE}" ]]; then
+  SOCAT_PRINTER_TYPE="tcp"
 fi
-if [[ -z "${SOCAT_ZWAVE_LOG}" ]]; then
-  SOCAT_ZWAVE_LOG="-lf \"$SOCAT_ZWAVE_LOG\""
+if [[ -z "${SOCAT_PRINTER_LOG}" ]]; then
+  SOCAT_PRINTER_LOG="-lf \"$SOCAT_PRINTER_LOG\""
 fi
-if [[ -z "${SOCAT_ZWAVE_LINK}" ]]; then
-  SOCAT_ZWAVE_LINK="/dev/zwave"
+if [[ -z "${SOCAT_PRINTER_LINK}" ]]; then
+  SOCAT_PRINTER_LINK="/dev/printer"
 fi
 
 BINARY="socat"
-PARAMS="$INT_SOCAT_LOG-d -d -d pty,link=$SOCAT_ZWAVE_LINK,raw,user=root,mode=777 $SOCAT_ZWAVE_TYPE:$SOCAT_ZWAVE_HOST:$SOCAT_ZWAVE_PORT"
+PARAMS="$INT_SOCAT_LOG-d -d -d pty,link=$SOCAT_PRINTER_LINK,raw,user=root,mode=777 $SOCAT_PRINTER_TYPE:$SOCAT_PRINTER_HOST:$SOCAT_PRINTER_PORT"
 
 ######################################################
 
@@ -35,10 +35,10 @@ is-running)
     if pgrep -f "$BINARY $PARAMS" >/dev/null 2>&1 ; then
         exit 1
     fi
-    # stop home assistant if socat is not running 
-    if pgrep -f "python -m homeassistant" >/dev/null 2>&1 ; then
-        echo "stopping home assistant since socat is not running"
-        kill -9 $(pgrep -f "python -m homeassistant")
+    # stop octoprint if socat is not running 
+    if pgrep -f "python -m octoprint" >/dev/null 2>&1 ; then
+        echo "stopping octoprint since socat is not running"
+        kill -9 $(pgrep -f "python -m octoprint")
     fi
     exit 0
     ;;

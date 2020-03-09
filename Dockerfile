@@ -7,10 +7,10 @@ COPY runwatch/run.sh /runwatch/run.sh
 # Monitor HomeAssistant
 COPY runwatch/200.octoprint.enabled.sh /runwatch/200.octoprint.enabled.sh
 
-# Install socat
-RUN apk add --no-cache socat
+# Install socat and bash (bash not included in original octoprint image)
+RUN apk add --no-cache socat bash
 
 # Monitor socat
-COPY runwatch/100.socat-serial.enabled.sh /runwatch/100.socat-serial.enabled.sh
+COPY runwatch/100.socat-printer.enabled.sh /runwatch/100.socat-printer.enabled.sh
 
 CMD [ "bash","/runwatch/run.sh" ]

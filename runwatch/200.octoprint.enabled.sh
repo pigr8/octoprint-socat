@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-BINARY="python"
-PARAMS="-m homeassistant --config /config"
+BINARY="/usr/bin/supervisord"
+PARAMS="-c /etc/supervisor/supervisord.conf"
 
 ######################################################
 
@@ -37,7 +37,7 @@ start)
         exit 0
     else
         # socat is not running
-        echo "##### Socat is not running, skipping start of home assistant"
+        echo "##### Socat is not running, skipping start of octoprint"
         exit 1
     fi
     ;;

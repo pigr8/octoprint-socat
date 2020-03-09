@@ -2,9 +2,9 @@
 clear
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-mkdir -p "$DIR/config"
+mkdir -p "$DIR/data"
 
-TAG="homeassistant-socat:latest"
+TAG="octoprint-socat:latest"
 
 COUNT=$( docker ps -a | grep "$TAG" | wc -l )
 if [ "$COUNT" == "0" ] ; then
@@ -12,24 +12,25 @@ if [ "$COUNT" == "0" ] ; then
 else
   echo "clearing..."
   echo "  - stopping $COUNT"
-  docker ps -a | grep "homeassistant-socat" | awk '{print $1}' | xargs docker stop
+  docker ps -a | grep "octoprint-socat" | awk '{print $1}' | xargs docker stop
   echo "  - removing $COUNT"
-  docker ps -a | grep "homeassistant-socat" | awk '{print $1}' | xargs docker rm
+  docker ps -a | grep "octoprint-socat" | awk '{print $1}' | xargs docker rm
   echo "... done"
 fi
 
 docker build -t "$TAG" .
 docker image list | grep "$TAG"
 docker run -d \
-  -e "SOCAT_ZWAVE_HOST=127.0.0.1" \
-  -e "SOCAT_ZWAVE_PORT=7676" \
-  -e "SOCAT_ZWAVE_LINK=/dev/zwave" \
+  -e "SOCAT_PRINTER_HOST=10.2.1.4" \
+  -e "SOCAT_PRINTER_PORT=7676" \
+  -e "SOCAT_PRINTER_LINK=/dev/ttyACM0" \
   -e "PAUSE_BETWEEN_CHECKS=10" \
-  -p "9123:8123" \
-  --mount type=bind,source="$DIR/config",target=/config \
+  -e "DEBUG_VERBOSE=1" \
+  -p "8000:80" \
+  --mount type=bind,source="$DIR/data",target=/data \
   "$TAG"
 
-docker ps -a | grep "homeassistant-socat" | awk '{print $1}' | xargs -I % echo docker exec -it % /bin/bash > tmp.run.sh
+docker ps -a | grep "octoprint-socat" | awk '{print $1}' | xargs -I % echo docker exec -it % /bin/bash > tmp.run.sh
 
 bash tmp.run.sh
 rm tmp.run.sh
