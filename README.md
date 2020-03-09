@@ -20,6 +20,9 @@ This docker container ensures that
 
 If there are any failures, both socat and octoprint will be restarted.
 
+# Example ser2net config
+
+`7676:raw:600:/dev/ttyACM0:115200 8DATABITS NONE 1STOPBIT`
 
 # Environment options:
 
@@ -51,6 +54,6 @@ Default: stdout
 
 Where socat should connect to - will be used as tcp://192.168.5.5:7676
 
-**SOCAT_PRINTER_LINK**="/dev/printer"
+**SOCAT_PRINTER_LINK**="/dev/ttyACM0"
 
 What the printer's serial device should be mapped to. Use this in octoprint's configuration files.
