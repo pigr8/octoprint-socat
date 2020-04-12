@@ -2,7 +2,7 @@
 set -ex
 
 # NOTE: this url will change regularly because it's unstable
-PACKAGE=http://ftp.de.debian.org/debian/pool/main/q/qemu/qemu-user-static_4.2-2_amd64.deb
+PACKAGE=http://ftp.debian.org/debian/pool/main/q/qemu/qemu-user-static_4.2-3_amd64.deb
 
 mkdir tmp/
 cd tmp/
