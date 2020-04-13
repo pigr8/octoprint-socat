@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/bin/bash
 set -ex
 
 # NOTE: this url will change regularly because it's unstable
