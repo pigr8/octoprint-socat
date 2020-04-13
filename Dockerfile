@@ -1,6 +1,6 @@
 # see hooks/build and hooks/.config
 ARG BASE_IMAGE_PREFIX
-FROM ${BASE_IMAGE_PREFIX}debian
+FROM ${BASE_IMAGE_PREFIX}alpine
 
 # see hooks/post_checkout
 ARG ARCH
@@ -20,4 +20,4 @@ RUN apk add --no-cache socat bash
 # Monitor for correct socat setup
 COPY runwatch/100.socat-printer.enabled.sh /runwatch/100.socat-printer.enabled.sh
 
-CMD [ "bash","/runwatch/run.sh" ]
+ENTRYPOINT /runwatch/run.sh
