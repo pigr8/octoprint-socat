@@ -1,0 +1,15 @@
+[Unit]
+Description=Enables socat for Klipper
+After=syslog.target klipper.service
+PartOf=klipper.service
+
+[Service]
+User=octoprint
+Type=simple
+ExecStart=/usr/bin/socat -d -d open:/tmp/printer tcp-l:5555,nodelay
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
+Alias=socat_klipper.service
