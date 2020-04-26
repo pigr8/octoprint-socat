@@ -1,59 +1,48 @@
-# Octoprint with socat for remote printers
+# Octoprint with socat for remote klipper/printers
 
-This is a Dockerfile to set up [OctoPrint](http://octoprint.org/) using an idea from vladbabii/homeassistant-socat to connect to network printers.
+This is a Dockerfile to set up [OctoPrint](http://octoprint.org/) alongside socat to allow remote connections to 3d printers or klipper instalattions.
 
-It also may be useful for running in a docker-based cluster such as swarm.
+This solution is a compilations various ideas found on related topics, but at its core it uses the [linixserver.io](https://github.com/linuxserver/docker-baseimage-alpine)'s alpine base image to take advantage of the [s6 overlaying](https://github.com/just-containers/s6-overlay) and a image format well known.
 
-Based on [nunofgs/octoprint](https://hub.docker.com/r/nunofgs/octoprint) image published on Docker Hub (as this is currently the most flexible image available which also supports the lightweight alpine), and [homeassistant-socat](https://github.com/vladbabii/homeassistant-socat) for the main idea on how to acheive this.
+# Why?
+My needs are very simple, I want to:
+ * Run octoprint in a hardware more powerful than a Rpi for a snappier experience;
+ * Set UID and GUID of the user running octoprint;
+ * Keep installed octoprint plugins even when container is destroyed;
+ * Connect to a remote 3Dprinter, ESP3D or klipper
 
-This is a new project and many issues are expected!!
+# How?
+I achieved this solution by compiling the information in the [Octoprint's docker GitHub](https://github.com/OctoPrint/docker) and [S6 documentations](http://skarnet.org/software/s6/index.html)
+
+Some information that I consider useful about this project:
+ * UID and GUID of user running Octoprint can be overridden like on any other linuxserver.io image;
+ * The said user has sudo permissions allowing to execute system commands like restart Octoprint itself or the socat like:
+  `sudo s6-svc -r /var/run/s6/services/octoprint` or `sudo s6-svc -r /var/run/s6/services/socat`
+ * All Octoprint's configuration files and installed plugins are present at `/config` (equivalent to the .octoprint)
+
+# What's Next?
+ * Use GitHubs actions to build and publish to DockerHub
+ * Allow multi ARCH (not my top priority as the main reason of this project is performance, so amd64)
 
 # Usage
+Usual workflow with docker-compose build and docker-compose up cpmmands
+Or import on Portainer
 
-Instead of using a locally-connected printer (usb serial device), we can use the serial device mapped over the network with ser2net and then map it to a local zwave serial device with socat.
+Create a socat service on klipper host. I included the `socat_klipper.service` file as example:
+Copy to `/etc/systemd/system/` and do `sudo systemctl enable socat_klipper.service` and after `sudo systemctl start socat_klipper.service`
 
-This docker container ensures that
-
- - A serial device is mapped in the local docker with socat
-
- - Octoprint is running
-
-If there are any failures, both socat and octoprint will be restarted.
-
-# Example ser2net config
-
-`7676:raw:600:/dev/ttyACM0:115200 8DATABITS NONE 1STOPBIT`
+And you're good to go.
 
 # Environment options:
 
 All Octoprint variables are available and on top of that a few others have been added:
 
-**DEBUG_VERBOSE**=0
+**SOCAT_USER**=abc
+User to have permissions to access this socat interface
 
-Set to 1 to see more information
-
-Default: 0
-
-**PAUSE_BETWEEN_CHECKS**=2
-
-In seconds, how much time to wait between checking running processes.
-
-Default: 2
-
-**LOG_TARGET**=/log.log
-
-Path to log file. Ommit to write logs to stdout.
-
-Default: stdout
-
-**SOCAT_PRINTER_TYPE**="tcp"
-
-**SOCAT_PRINTER_HOST**="192.168.5.5"
-
-**SOCAT_PRINTER_PORT**="7676"
-
-Where socat should connect to - will be used as tcp://192.168.5.5:7676
+**SOCAT_PRINTER_HOST**="localhost"
+**SOCAT_PRINTER_PORT**="5555"
+Where socat should connect to - will be used as tcp://localhost5:5555
 
 **SOCAT_PRINTER_LINK**="/dev/ttyACM0"
-
 What the printer's serial device should be mapped to. Use this in octoprint's configuration files.
