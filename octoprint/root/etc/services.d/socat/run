@@ -1,4 +1,11 @@
 #!/usr/bin/with-contenv bash
+SOCAT_LINK=${SOCAT_LINK:-/tmp/printer}
+SOCAT_USER=${SOCAT_USER:-abc}
+SOCAT_HOST=${SOCAT_PRINTER_HOST:-localhost}
+SOCAT_PORT=${SOCAT_PRINTER_PORT:-5555}
+
+PARAMS="-d -d pty,link=${SOCAT_LINK},rawer,wait-slave,user=${SOCAT_USER},group=${SOCAT_USER},mode=777 tcp:${SOCAT_PRINTER_HOST}:${SOCAT_PRINTER_PORT}"
 
 exec \
-	s6-setuidgid abc octoprint serve --host 0.0.0.0 -b /config
+	s6-setuidgid root socat $PARAMS
+

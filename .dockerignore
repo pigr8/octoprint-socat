@@ -1,4 +1,2 @@
-hooks
-Dockerfile
 README.md
-build-and-test.sh
+socat_klipper.service

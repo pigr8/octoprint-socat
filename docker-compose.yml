@@ -1,13 +1,14 @@
 version: "3.6"
 services:
   octoprint:
-    image: octoprint_socat:0.1.7
+    image: octoprint_socat:1.4.0
     container_name: octoprint_socat
     build:
       context: ./octoprint
       dockerfile: Dockerfile
       args:
-        ARCH: amd64
+        # null will get latest stable version of octoprint, 'master' will get the latest on master branch, or other releases
+        - OCTOPRINT_VERSION=
     environment:
       - TZ=Europe/Zurich
       - PGID=100

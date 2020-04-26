@@ -45,13 +45,10 @@ RUN \
 	setuptools && \
  echo "**** install octoprint ****" && \
  mkdir -p /app/octoprint && \
- if [ -z ${OCTOPRINT_VERSION+x} ]; then \
-	OCTOPRINT_VERSION=$(curl -sLX GET https://api.github.com/repos/foosel/OctoPrint/releases/latest | jq -r '.tag_name'); \
- fi && \
+ STABLE_OCTOPRINT_VERSION=$(curl -sLX GET https://api.github.com/repos/foosel/OctoPrint/releases/latest | jq -r '.tag_name'); \
  curl -o /tmp/octoprint.tar.gz -fsSL --compressed --retry 3 --retry-delay 10 \
-	"https://github.com/OctoPrint/OctoPrint/archive/${OCTOPRINT_VERSION}.tar.gz" && \
+	"https://github.com/OctoPrint/OctoPrint/archive/${OCTOPRINT_VERSION:-$STABLE_OCTOPRINT_VERSION}.tar.gz" && \
  tar xzf /tmp/octoprint.tar.gz -C /app/octoprint --strip-components=1 && \
- echo "**** install venv ****" && \
  cd /app/octoprint && \
  pip install -U -r requirements.txt && \
  python setup.py install && \
