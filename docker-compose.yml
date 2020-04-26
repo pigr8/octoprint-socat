@@ -1,0 +1,27 @@
+version: "3.6"
+services:
+  octoprint:
+    image: octoprint_socat:0.1.7
+    container_name: octoprint_socat
+    build:
+      context: ./octoprint
+      dockerfile: Dockerfile
+      args:
+        ARCH: amd64
+    environment:
+      - TZ=Europe/Zurich
+      - PGID=100
+      - PUID=1001
+      - SOCAT_PRINTER_HOST=192.168.0.210
+      - SOCAT_PRINTER_PORT=5555
+    volumes:
+      - /appdata/octoprint:/config
+    ports:
+      - 9550:5000
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"

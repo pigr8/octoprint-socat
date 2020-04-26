@@ -1,0 +1,75 @@
+FROM lsiobase/alpine:3.10
+
+### Example from linuxserver.io's pyLoad
+
+ARG OCTOPRINT_VERSION
+
+RUN \
+ echo "**** install build packages ****" && \
+ apk update && \
+ apk add --no-cache --virtual=build-dependencies \
+	cmake \
+	freetype-dev \
+	jq \
+	libjpeg-turbo-dev \
+	linux-headers \
+	openssl \
+	tiff-dev && \
+ echo "**** install runtime packages ****" && \
+ apk add --no-cache \
+	bash \
+	build-base \
+	curl \
+	ffmpeg \
+	git \
+	libjpeg-turbo \
+	openjpeg \
+	openssh-client \
+	py2-pip \
+	python2-dev \
+	socat \
+	sudo \
+	tar \
+	tiff \
+	unrar \
+	unzip \
+	vnstat \
+	wget \
+	xz \
+	zlib && \
+ echo "**** install pip packages ****" && \
+ pip install --no-cache-dir -U \
+	pip && \
+ pip install -U \
+	psutil \
+	setuptools && \
+ echo "**** install octoprint ****" && \
+ mkdir -p /app/octoprint && \
+ if [ -z ${OCTOPRINT_VERSION+x} ]; then \
+	OCTOPRINT_VERSION=$(curl -sLX GET https://api.github.com/repos/foosel/OctoPrint/releases/latest | jq -r '.tag_name'); \
+ fi && \
+ curl -o /tmp/octoprint.tar.gz -fsSL --compressed --retry 3 --retry-delay 10 \
+	"https://github.com/OctoPrint/OctoPrint/archive/${OCTOPRINT_VERSION}.tar.gz" && \
+ tar xzf /tmp/octoprint.tar.gz -C /app/octoprint --strip-components=1 && \
+ echo "**** install venv ****" && \
+ cd /app/octoprint && \
+ pip install -U -r requirements.txt && \
+ python setup.py install && \
+ echo "**** clean up ****" && \
+ apk del --purge \
+	build-dependencies && \
+ rm -rf \
+	/root/.cache \
+	/tmp/* \
+	/var/cache/apk/*
+
+# add local files
+COPY root/ /
+
+# ports and volumes
+VOLUME /config
+
+EXPOSE 5000
+
+ENV PIP_USER true
+ENV PYTHONUSERBASE /config/plugins

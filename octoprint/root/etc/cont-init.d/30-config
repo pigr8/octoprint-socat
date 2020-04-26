@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+
+echo "[cont-init.d] Enabling sudo to allow service restart"
+sed --in-place 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+NOPASSWD:\s\+ALL\)/\1/' /etc/sudoers
+usermod -aG wheel
+
+echo "[cont-init.d] Setting permissions this may take some time"
+chown -R abc:abc \
+  /config
