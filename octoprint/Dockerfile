@@ -22,6 +22,7 @@ RUN \
 	curl \
 	ffmpeg \
 	git \
+	jpeg-dev \
 	libjpeg-turbo \
 	openjpeg \
 	openssh-client \
@@ -36,7 +37,7 @@ RUN \
 	vnstat \
 	wget \
 	xz \
-	zlib && \
+	zlib-dev && \
  echo "**** install pip packages ****" && \
  pip install --no-cache-dir -U \
 	pip && \
