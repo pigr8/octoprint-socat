@@ -1,7 +1,7 @@
 version: "2"
 services:
   octoprint:
-    image: octoprint_socat:1.4.0
+    image: octoprint_socat:1.4.1_py3
     container_name: octoprint_socat
     build:
       context: ./octoprint

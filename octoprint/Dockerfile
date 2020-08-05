@@ -1,4 +1,4 @@
-FROM lsiobase/alpine:3.10
+FROM lsiobase/alpine:3.12
 
 ### Example from linuxserver.io's pyLoad
 
@@ -26,8 +26,8 @@ RUN \
 	libjpeg-turbo \
 	openjpeg \
 	openssh-client \
-	py2-pip \
-	python2-dev \
+	py3-pip \
+	python3-dev \
 	socat \
 	sudo \
 	tar \
@@ -38,6 +38,12 @@ RUN \
 	wget \
 	xz \
 	zlib-dev && \
+ echo "**** use ensure to check for pip and link /usr/bin/pip3 to /usr/bin/pip ****" && \
+ python3 -m ensurepip && \
+ rm -r /usr/lib/python*/ensurepip && \
+ if \
+	[ ! -e /usr/bin/pip ]; then \
+	ln -s /usr/bin/pip3 /usr/bin/pip ; fi && \
  echo "**** install pip packages ****" && \
  pip install --no-cache-dir -U \
 	pip && \
@@ -52,7 +58,7 @@ RUN \
  tar xzf /tmp/octoprint.tar.gz -C /app/octoprint --strip-components=1 && \
  cd /app/octoprint && \
  pip install -U -r requirements.txt && \
- python setup.py install && \
+ python3 setup.py install && \
  echo "**** clean up ****" && \
  apk del --purge \
 	build-dependencies && \
